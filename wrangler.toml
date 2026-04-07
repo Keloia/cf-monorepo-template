@@ -1,0 +1,21 @@
+name = "cf-worker"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cf-worker-db"
+database_id = ""  # fill after `wrangler d1 create`
+migrations_dir = "migrations"
+
+# Uncomment after `wrangler kv namespace create`:
+# [[kv_namespaces]]
+# binding = "KV"
+# id = "your-kv-namespace-id"
+
+[[analytics_engine_datasets]]
+binding = "METRICS"
+dataset = "cf_worker_metrics"
+
+[vars]
+# Add your env vars here — use `wrangler secret put` for production secrets
