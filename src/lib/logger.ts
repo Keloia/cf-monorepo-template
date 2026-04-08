@@ -40,18 +40,27 @@ function sanitize(obj: Record<string, unknown>): Record<string, unknown> {
   return result
 }
 
+export type BufferedLogEntry = {
+  level: 'info' | 'warn' | 'error'
+  message: string
+  requestId: string
+  extra?: Record<string, unknown>
+}
+
 export function createLogger(requestId: string, minLevel: LogLevel = 'info') {
   const minOrder = LEVEL_ORDER[minLevel]
+  const buffer: BufferedLogEntry[] = []
 
   function log(level: LogLevel, message: string, extra?: Record<string, unknown>) {
     if (LEVEL_ORDER[level] < minOrder) return
 
+    const sanitized = sanitize(extra ?? {})
     const entry = {
       level,
       message,
       timestamp: new Date().toISOString(),
       requestId,
-      ...sanitize(extra ?? {}),
+      ...sanitized,
     }
 
     const line = JSON.stringify(entry)
@@ -62,6 +71,15 @@ export function createLogger(requestId: string, minLevel: LogLevel = 'info') {
     } else {
       console.log(line)
     }
+
+    if (level !== 'debug') {
+      buffer.push({
+        level: level as 'info' | 'warn' | 'error',
+        message,
+        requestId,
+        extra: sanitized,
+      })
+    }
   }
 
   return {
@@ -69,6 +87,7 @@ export function createLogger(requestId: string, minLevel: LogLevel = 'info') {
     info: (msg: string, extra?: Record<string, unknown>) => log('info', msg, extra),
     warn: (msg: string, extra?: Record<string, unknown>) => log('warn', msg, extra),
     error: (msg: string, extra?: Record<string, unknown>) => log('error', msg, extra),
+    getEntries: (): BufferedLogEntry[] => [...buffer],
   }
 }
 

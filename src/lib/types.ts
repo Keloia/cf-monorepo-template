@@ -8,6 +8,12 @@ export type Bindings = {
   METRICS?: AnalyticsEngineDataset
   SENTRY_DSN?: string
   SENTRY_RELEASE?: string
+  /** Base URL of the monitoring-services /ingest endpoint (optional — no-op if absent) */
+  MONITOR_INGEST_URL?: string
+  /** Bearer token for authenticating with the monitoring-services /ingest endpoint */
+  MONITOR_API_KEY?: string
+  /** Service name used as the `source` field in forwarded logs (defaults to "cf-worker") */
+  SERVICE_NAME?: string
 }
 
 /**

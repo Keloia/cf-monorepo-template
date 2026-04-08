@@ -1,2 +1,6 @@
 # Copy to .dev.vars and fill in values
 # SENTRY_DSN=""
+
+# Monitoring integration (optional — log forwarding disabled if absent)
+# MONITOR_INGEST_URL="http://localhost:8790"
+# MONITOR_API_KEY=""

@@ -18,4 +18,8 @@ binding = "METRICS"
 dataset = "cf_worker_metrics"
 
 [vars]
+SERVICE_NAME = "cf-worker"
 # Add your env vars here — use `wrangler secret put` for production secrets
+# For monitoring integration, set via `wrangler secret put`:
+#   MONITOR_INGEST_URL — base URL of monitoring-services worker
+#   MONITOR_API_KEY    — bearer token matching INGEST_API_KEY in monitoring-services

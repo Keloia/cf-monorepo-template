@@ -8,6 +8,7 @@
 import type { MiddlewareHandler } from 'hono'
 import type { Bindings, Variables } from '../lib/types'
 import { createLogger } from '../lib/logger'
+import { createLogForwarder } from '../lib/log-forwarder'
 
 type HonoEnv = { Bindings: Bindings; Variables: Variables }
 
@@ -35,4 +36,10 @@ export const requestIdMiddleware: MiddlewareHandler<HonoEnv> = async (c, next) =
     status: c.res.status,
     durationMs: duration,
   })
+
+  const forwarder = createLogForwarder(c.env)
+  for (const entry of logger.getEntries()) {
+    forwarder.add(entry)
+  }
+  c.executionCtx.waitUntil(forwarder.flush())
 }
