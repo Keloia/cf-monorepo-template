@@ -37,9 +37,11 @@ export const requestIdMiddleware: MiddlewareHandler<HonoEnv> = async (c, next) =
     durationMs: duration,
   })
 
-  const forwarder = createLogForwarder(c.env)
-  for (const entry of logger.getEntries()) {
-    forwarder.add(entry)
+  if (c.env.MONITOR_INGEST_URL && c.executionCtx?.waitUntil) {
+    const forwarder = createLogForwarder(c.env)
+    for (const entry of logger.getEntries()) {
+      forwarder.add(entry)
+    }
+    c.executionCtx.waitUntil(forwarder.flush())
   }
-  c.executionCtx.waitUntil(forwarder.flush())
 }
